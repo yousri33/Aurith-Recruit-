@@ -112,11 +112,16 @@ export default function AuthPage() {
   }
 
   const handleOAuth = async (provider: 'google') => {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+    // window.location.origin is the current domain (e.g., https://aurith-recruit.vercel.app)
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
+    const callbackUrl = `${origin}/auth/callback?next=/dashboard`
+
+    console.log('Redirecting to Supabase with callback:', callbackUrl)
+
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${siteUrl}/auth/callback?next=/dashboard`,
+        redirectTo: callbackUrl,
         queryParams: provider === 'google' ? { prompt: 'select_account' } : undefined,
       },
     })
