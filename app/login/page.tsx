@@ -62,7 +62,23 @@ export default function AuthPage() {
   useEffect(() => {
     setLanguage(getStoredLanguage())
     setMounted(true)
-  }, [])
+
+    // Check for existing session and redirect if logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.push('/dashboard')
+      }
+    })
+
+    // Listen for auth state changes (crucial for OAuth callbacks appearing in URL fragments)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        router.push('/dashboard')
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [router])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
