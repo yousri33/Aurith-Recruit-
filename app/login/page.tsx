@@ -106,10 +106,11 @@ export default function AuthPage() {
   }
 
   const handleOAuth = async (provider: 'google') => {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+        redirectTo: `${siteUrl}/auth/callback?next=/dashboard`,
         queryParams: provider === 'google' ? { prompt: 'select_account' } : undefined,
       },
     })
