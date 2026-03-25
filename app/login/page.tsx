@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -45,10 +45,11 @@ AuthInput.displayName = 'AuthInput'
 // ─── Main Page ────────────────────────────────────────────
 export default function AuthPage() {
   const router = useRouter()
-  const [language, setLanguage] = useState<'fr' | 'en'>(getStoredLanguage())
+  const [language, setLanguage] = useState<'fr' | 'en'>('en') // SSR-safe default
   const [tab, setTab] = useState<'signin' | 'signup'>('signin')
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   // Sign in state
   const [signIn, setSignIn] = useState({ email: '', password: '' })
@@ -57,6 +58,11 @@ export default function AuthPage() {
   const [signUp, setSignUp] = useState({
     firstName: '', lastName: '', email: '', password: '', confirmPassword: '',
   })
+
+  useEffect(() => {
+    setLanguage(getStoredLanguage())
+    setMounted(true)
+  }, [])
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
