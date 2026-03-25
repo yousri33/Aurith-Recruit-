@@ -109,7 +109,7 @@ export default function AuthPage() {
     await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
         queryParams: provider === 'google' ? { prompt: 'select_account' } : undefined,
       },
     })
