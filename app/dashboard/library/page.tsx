@@ -71,7 +71,7 @@ export default function LibraryPage() {
   }
 
   return (
-    <div className="p-10 max-w-6xl mx-auto space-y-12">
+    <div className="py-6 md:p-10 max-w-6xl mx-auto space-y-8 md:space-y-12">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div className="space-y-3">
@@ -79,11 +79,11 @@ export default function LibraryPage() {
             <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20 shadow-sm transition-transform hover:rotate-6">
               <FolderOpen className="h-7 w-7" />
             </div>
-            <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase italic leading-none">
+            <h1 className="text-3xl md:text-5xl font-black tracking-tighter text-foreground uppercase italic leading-none">
               {t('library.title', language)}
             </h1>
           </div>
-          <p className="text-sm font-bold text-muted-foreground/60 uppercase tracking-[0.2em] pl-1 leading-relaxed">
+          <p className="text-xs md:text-sm font-bold text-muted-foreground/60 uppercase tracking-[0.2em] pl-1 leading-relaxed">
             {language === 'fr' ? 'Organisez vos CV en dossiers par campagne' : 'Organize your CVs into folders by campaign'}
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function LibraryPage() {
           </Button>
         </motion.div>
       ) : (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
           {folders.map((folder, index) => (
             <motion.div key={folder.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: index * 0.05 }}>
               <FolderCard folder={folder} language={language} onDelete={handleDelete} />

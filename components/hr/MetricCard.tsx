@@ -32,7 +32,7 @@ export function MetricCard({ title, value, icon, trend, className, total, descri
     >
       <Card
         className={cn(
-          'relative overflow-hidden p-5 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-xl rounded-2xl',
+          'relative overflow-hidden p-4 transition-all duration-300 group cursor-pointer shadow-sm hover:shadow-xl rounded-2xl',
           'bg-white/60 dark:bg-neutral-900/40 backdrop-blur-md border border-border/50 hover:border-primary/40',
           className,
         )}
@@ -44,24 +44,24 @@ export function MetricCard({ title, value, icon, trend, className, total, descri
         />
 
         <div className="z-10 relative flex flex-col h-full justify-between">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="p-2 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm border border-primary/10">
+          <div className="flex items-center gap-3 mb-2 md:mb-6">
+            <span className="p-1.5 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-sm border border-primary/10">
               {icon}
             </span>
-            <p className="text-[13px] font-bold text-muted-foreground uppercase tracking-wider">{title}</p>
+            <p className="text-[11px] md:text-[13px] font-bold text-muted-foreground uppercase tracking-wider">{title}</p>
           </div>
 
-          <div className="flex justify-between items-end gap-4 min-h-[80px]">
+          <div className="flex justify-between items-end gap-2 md:gap-4 min-h-[60px] md:min-h-[80px]">
             <div className="flex flex-col gap-1.5 flex-1">
-              <p className="text-4xl font-black tracking-tighter tabular-nums text-foreground group-hover:text-primary transition-colors duration-300">
+              <p className="text-2xl md:text-4xl font-black tracking-tighter tabular-nums text-foreground group-hover:text-primary transition-colors duration-300">
                 {value}
               </p>
               {description && (
-                <p className="text-xs font-medium text-muted-foreground/70 leading-tight">
+                <p className="text-[10px] md:text-xs font-medium text-muted-foreground/70 leading-tight">
                   {description}
                 </p>
               )}
-              <div className="mt-3 h-7 flex items-end">
+              <div className="mt-1.5 h-6 flex items-end">
                 {trend && (
                   <div
                     className={cn(
@@ -84,13 +84,13 @@ export function MetricCard({ title, value, icon, trend, className, total, descri
 
             {/* Radial chart when total is provided */}
             {percentage !== null && (
-              <div className="relative h-16 w-16 flex-shrink-0 animate-in fade-in zoom-in duration-500">
+              <div className="relative h-14 w-14 md:h-18 md:w-18 flex-shrink-0 animate-in fade-in zoom-in duration-500">
                 <ResponsiveContainer width="100%" height="100%">
                   <RadialBarChart
                     cx="50%"
                     cy="50%"
-                    innerRadius={24}
-                    outerRadius={32}
+                    innerRadius="65%"
+                    outerRadius="100%"
                     barSize={6}
                     data={[{ value: percentage }]}
                     startAngle={90}
@@ -108,7 +108,7 @@ export function MetricCard({ title, value, icon, trend, className, total, descri
                   </RadialBarChart>
                 </ResponsiveContainer>
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <span className="text-[12px] font-bold text-foreground tracking-tighter group-hover:text-primary transition-colors">
+                  <span className="text-[11px] md:text-[13px] font-black text-foreground tracking-tighter group-hover:text-primary transition-colors leading-none">
                     {percentage}%
                   </span>
                 </div>

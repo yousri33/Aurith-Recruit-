@@ -50,7 +50,7 @@ export function FolderCard({ folder, language, onDelete }: FolderCardProps) {
       className="h-full"
     >
       <Card className={cn(
-        "relative overflow-hidden flex flex-col p-7 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl rounded-[2rem] group h-full min-h-[220px]",
+        "relative overflow-hidden flex flex-col p-5 md:p-7 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl rounded-[1.5rem] md:rounded-[2rem] group h-full min-h-[180px] md:min-h-[220px]",
         "bg-white/60 dark:bg-neutral-900/40 backdrop-blur-md", // Glassmorphism
         "border border-border/50 hover:border-primary/40"
       )}>
@@ -67,9 +67,9 @@ export function FolderCard({ folder, language, onDelete }: FolderCardProps) {
               <div className="p-2.5 bg-primary/10 rounded-xl border border-primary/20 text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-md transition-all duration-300">
                 <FolderOpen className="w-5 h-5" />
               </div>
-              <div className="flex-1 min-w-0 pr-4">
-                <h3 className="font-black text-[16px] tracking-tight text-foreground truncate">{folder.name}</h3>
-                <p className="text-[12px] font-black uppercase tracking-widest text-muted-foreground/50 truncate">{folder.job_title}</p>
+              <div className="flex-1 min-w-0 pr-2 md:pr-4">
+                <h3 className="font-black text-[15px] md:text-[16px] tracking-tight text-foreground truncate">{folder.name}</h3>
+                <p className="text-[11px] md:text-[12px] font-black uppercase tracking-widest text-muted-foreground/50 truncate">{folder.job_title}</p>
               </div>
             </div>
             
@@ -101,13 +101,13 @@ export function FolderCard({ folder, language, onDelete }: FolderCardProps) {
             </div>
           </div>
 
-          <div className="mt-auto pt-8 flex items-end justify-between border-t border-border/10">
+          <div className="mt-auto pt-6 md:pt-8 flex items-end justify-between border-t border-border/10">
             <div className="flex items-center gap-12">
               <div className="flex flex-col gap-2">
                 <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">
                   {language === 'fr' ? 'Candidats' : 'Candidates'}
                 </span>
-                <span className="text-[32px] font-black tracking-tighter tabular-nums leading-none text-foreground group-hover:text-primary transition-colors duration-300">
+                <span className="text-2xl md:text-[32px] font-black tracking-tighter tabular-nums leading-none text-foreground group-hover:text-primary transition-colors duration-300">
                   {folder.cv_count}
                 </span>
               </div>
@@ -115,7 +115,7 @@ export function FolderCard({ folder, language, onDelete }: FolderCardProps) {
                 <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">
                   {language === 'fr' ? 'Créé' : 'Created'}
                 </span>
-                <span className="text-[16px] font-black text-foreground/80 leading-none py-[2px] tracking-tight uppercase">
+                <span className="text-[14px] md:text-[16px] font-black text-foreground/80 leading-none py-[2px] tracking-tight uppercase">
                   {new Date(folder.created_at).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { month: 'short', day: 'numeric' })}
                 </span>
               </div>
