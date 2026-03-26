@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
@@ -44,12 +44,31 @@ AuthInput.displayName = 'AuthInput'
 
 // ─── Main Page ────────────────────────────────────────────
 export default function AuthPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthPageContent />
+    </Suspense>
+  )
+}
+
+function AuthPageContent() {
   const router = useRouter()
+  // ... rest of the existing code moved here
   const [language, setLanguage] = useState<'fr' | 'en'>('en') // SSR-safe default
-  const [tab, setTab] = useState<'signin' | 'signup'>('signin')
+  const searchParams = useSearchParams()
+  const initialTab = (searchParams.get('tab') as 'signin' | 'signup') || 'signin'
+  const [tab, setTab] = useState<'signin' | 'signup'>(initialTab)
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [mounted, setMounted] = useState(false)
+
+  // Update tab if URL param changes
+  useEffect(() => {
+    const t_ = searchParams.get('tab')
+    if (t_ === 'signin' || t_ === 'signup') {
+      setTab(t_)
+    }
+  }, [searchParams])
 
   // Sign in state
   const [signIn, setSignIn] = useState({ email: '', password: '' })

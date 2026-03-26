@@ -8,7 +8,7 @@ import { t, getStoredLanguage, setStoredLanguage } from '@/lib/i18n'
 import { supabase } from '@/lib/supabase'
 import { Header } from '@/components/ui/header-2'
 import { Button } from '@/components/ui/button'
-import { FolderOpen, Zap, BarChart3, ArrowRight, Instagram, Linkedin, ExternalLink, Check } from 'lucide-react'
+import { DollarSign, TrendingUp, BarChart3, ArrowRight, Instagram, Linkedin, ExternalLink, Check } from 'lucide-react'
 import { NoiseBackground } from '@/components/ui/noise-background'
 import { LoaderThree } from '@/components/ui/loader'
 import { BeamsBackground } from '@/components/ui/beams-background'
@@ -125,7 +125,7 @@ export default function LandingPage() {
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-10 rounded-[2rem] blur-2xl transition-opacity" />
               <div className="relative">
                 <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <FolderOpen className="w-7 h-7 text-primary" />
+                  <DollarSign className="w-7 h-7 text-primary" />
                 </div>
                 <h4 className="text-xl font-black text-foreground mb-3 tracking-tight">
                   {t('landing.feature1_title', language)}
@@ -147,7 +147,7 @@ export default function LandingPage() {
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-10 rounded-[2rem] blur-2xl transition-opacity" />
               <div className="relative">
                 <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <Zap className="w-7 h-7 text-primary" />
+                  <TrendingUp className="w-7 h-7 text-primary" />
                 </div>
                 <h4 className="text-xl font-black text-foreground mb-3 tracking-tight">
                   {t('landing.feature2_title', language)}

@@ -134,7 +134,7 @@ export async function registerUser(fullName: string, email: string, password: st
     options: {
       data: { full_name: fullName },
       emailRedirectTo: typeof window !== 'undefined'
-        ? `${window.location.origin}/dashboard`
+        ? `${window.location.origin}/auth/callback?next=/dashboard`
         : undefined,
     },
   })
