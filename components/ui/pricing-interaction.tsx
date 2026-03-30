@@ -61,9 +61,9 @@ export function PricingInteraction() {
                         value={price}
                         format={{ minimumFractionDigits: 0 }}
                     />
-                    <motion.span 
-                        animate={{ color: active === 1 ? "var(--color-primary)" : "currentColor" }}
-                        className="text-4xl font-black tracking-widest text-primary/80"
+                    <motion.span
+                        animate={{ opacity: active === 1 ? 1 : 0.6 }}
+                        className={cn("text-4xl font-black tracking-widest", active === 1 ? "text-primary" : "text-foreground/60")}
                     >
                         DA
                     </motion.span>

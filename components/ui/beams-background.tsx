@@ -34,8 +34,8 @@ function createBeam(width: number, height: number): Beam {
         length: height * 2.5,
         angle: angle,
         speed: 0.6 + Math.random() * 1.2,
-        opacity: 0.25 + Math.random() * 0.25,
-        hue: 220 + Math.random() * 20, // Navy blue hue
+        opacity: 0.1 + Math.random() * 0.15,
+        hue: 200 + Math.random() * 5, // Neutral cool gray-blue
         pulse: Math.random() * Math.PI * 2,
         pulseSpeed: 0.02 + Math.random() * 0.03,
     };
@@ -96,8 +96,8 @@ export function BeamsBackground({
                 (Math.random() - 0.5) * spacing * 0.5;
             beam.width = 100 + Math.random() * 100;
             beam.speed = 0.5 + Math.random() * 0.4;
-            beam.hue = 220 + (index * 20) / totalBeams; // Navy spectrum
-            beam.opacity = 0.2 + Math.random() * 0.1;
+            beam.hue = 200 + (index * 5) / totalBeams; // Subtle cool gray-blue
+            beam.opacity = 0.08 + Math.random() * 0.08;
             return beam;
         }
 

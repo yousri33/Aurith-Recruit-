@@ -107,9 +107,9 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <h3 className="text-4xl font-black text-foreground tracking-tighter sm:text-5xl">
+            <h2 className="text-4xl font-black text-foreground tracking-tighter sm:text-5xl">
               {language === 'fr' ? 'Pourquoi Aurith Recruit?' : 'Why Aurith Recruit?'}
-            </h3>
+            </h2>
             <div className="w-20 h-1.5 bg-primary mx-auto mt-6 rounded-full" />
           </motion.div>
 
@@ -124,12 +124,12 @@ export default function LandingPage() {
             >
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-10 rounded-[2rem] blur-2xl transition-opacity" />
               <div className="relative">
-                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="mb-6">
                   <DollarSign className="w-7 h-7 text-primary" />
                 </div>
-                <h4 className="text-xl font-black text-foreground mb-3 tracking-tight">
+                <h3 className="text-xl font-black text-foreground mb-3 tracking-tight">
                   {t('landing.feature1_title', language)}
-                </h4>
+                </h3>
                 <p className="text-muted-foreground/80 text-sm leading-relaxed">
                   {t('landing.feature1_desc', language)}
                 </p>
@@ -146,12 +146,12 @@ export default function LandingPage() {
             >
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-10 rounded-[2rem] blur-2xl transition-opacity" />
               <div className="relative">
-                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="mb-6">
                   <TrendingUp className="w-7 h-7 text-primary" />
                 </div>
-                <h4 className="text-xl font-black text-foreground mb-3 tracking-tight">
+                <h3 className="text-xl font-black text-foreground mb-3 tracking-tight">
                   {t('landing.feature2_title', language)}
-                </h4>
+                </h3>
                 <p className="text-muted-foreground/80 text-sm leading-relaxed">
                   {t('landing.feature2_desc', language)}
                 </p>
@@ -168,12 +168,12 @@ export default function LandingPage() {
             >
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-10 rounded-[2rem] blur-2xl transition-opacity" />
               <div className="relative">
-                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="mb-6">
                   <BarChart3 className="w-7 h-7 text-primary" />
                 </div>
-                <h4 className="text-xl font-black text-foreground mb-3 tracking-tight">
+                <h3 className="text-xl font-black text-foreground mb-3 tracking-tight">
                   {t('landing.feature3_title', language)}
-                </h4>
+                </h3>
                 <p className="text-muted-foreground/80 text-sm leading-relaxed">
                   {t('landing.feature3_desc', language)}
                 </p>
