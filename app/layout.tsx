@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import Script from 'next/script'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { AnalyticsProvider } from './analytics-provider'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -37,25 +37,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <Script
-          src="/analytics-tracker.js"
-          strategy="afterInteractive"
-          onLoad={() => {
-            if (typeof window !== 'undefined' && window.WebsiteTracker) {
-              window.WebsiteTracker.init({
-                trackingUrl: '/api/track',
-                website: 'aurith-recruit.com',
-                enabled: true,
-                trackPageView: true,
-                debug: false
-              });
-            }
-          }}
-        />
-      </head>
+      <head />
       <body className="font-sans antialiased bg-white">
         {children}
+        <AnalyticsProvider />
         <Analytics />
       </body>
     </html>
