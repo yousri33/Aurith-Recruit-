@@ -41,20 +41,16 @@ export default function RootLayout({
         <Script
           src="/analytics-tracker.js"
           strategy="afterInteractive"
-        />
-        <Script
-          id="init-analytics"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              WebsiteTracker.init({
+          onLoad={() => {
+            if (typeof window !== 'undefined' && window.WebsiteTracker) {
+              window.WebsiteTracker.init({
                 trackingUrl: '/api/track',
                 website: 'aurith-recruit.com',
                 enabled: true,
                 trackPageView: true,
                 debug: false
               });
-            `,
+            }
           }}
         />
       </head>

@@ -57,21 +57,68 @@ function formatTelegramMessage(event: TrackingEvent): string {
 
   message += `<b>Time:</b> ${timestamp}\n`;
 
-  if (event.referrer && event.referrer !== "direct") {
-    message += `<b>Referrer:</b> ${event.referrer}\n`;
-  }
-
-  if (event.userAgent) {
-    // Extract OS and browser info
+  // Device Information
+  const device = event.metadata?.device as any || {};
+  if (device.model || device.os) {
+    message += `\n<b>Device:</b>\n`;
+    if (device.model) message += `  🔧 Model: ${device.model}\n`;
+    if (device.os) message += `  🖥️ OS: ${device.os}`;
+    if (device.osVersion) message += ` ${device.osVersion}`;
+    message += `\n`;
+    if (device.browser) message += `  🌐 Browser: ${device.browser}`;
+    if (device.browserVersion) message += ` ${device.browserVersion}`;
+    message += `\n`;
+  } else if (event.userAgent) {
     const isMobile = /Mobile|Android|iPhone/.test(event.userAgent);
     const deviceType = isMobile ? "📱 Mobile" : "💻 Desktop";
     message += `<b>Device:</b> ${deviceType}\n`;
   }
 
-  if (event.metadata && Object.keys(event.metadata).length > 0) {
+  // Location Information
+  if (device.timezone || device.language) {
+    message += `\n<b>Location:</b>\n`;
+    if (device.timezone) message += `  📍 Timezone: ${device.timezone}\n`;
+    if (device.language) message += `  🌍 Language: ${device.language}\n`;
+  }
+
+  // Screen Information
+  const screen = event.metadata?.screen as any;
+  if (screen?.screenResolution) {
+    message += `\n<b>Screen:</b>\n`;
+    message += `  📐 Resolution: ${screen.screenResolution}\n`;
+    if (screen.devicePixelRatio) {
+      message += `  💾 Pixel Ratio: ${screen.devicePixelRatio}\n`;
+    }
+  }
+
+  if (event.referrer && event.referrer !== "direct") {
+    message += `\n<b>Referrer:</b> ${event.referrer}\n`;
+  }
+
+  // Connection Status
+  if (device.onLine !== undefined) {
+    message += `<b>Status:</b> ${device.onLine ? "🟢 Online" : "🔴 Offline"}\n`;
+  }
+
+  // Other metadata
+  const otherMetadata = event.metadata
+    ? Object.entries(event.metadata).filter(
+        ([key]) =>
+          !["device", "screen"].includes(key) &&
+          key !== "device" &&
+          key !== "os" &&
+          key !== "browser"
+      )
+    : [];
+
+  if (otherMetadata.length > 0) {
     message += `\n<b>Details:</b>\n`;
-    Object.entries(event.metadata).forEach(([key, value]) => {
-      message += `  • ${key}: ${JSON.stringify(value)}\n`;
+    otherMetadata.forEach(([key, value]) => {
+      if (typeof value === "object") {
+        message += `  • ${key}: ${JSON.stringify(value)}\n`;
+      } else {
+        message += `  • ${key}: ${value}\n`;
+      }
     });
   }
 

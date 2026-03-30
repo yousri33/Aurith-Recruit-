@@ -1,0 +1,264 @@
+╔════════════════════════════════════════════════════════════════════════════════════╗
+║                     TELEGRAM ANALYTICS - ALL MESSAGE TYPES                         ║
+╚════════════════════════════════════════════════════════════════════════════════════╝
+
+YOUR SYSTEM SENDS 18 DIFFERENT MESSAGE TYPES:
+
+1. PAGE VIEW ──────────────────────────────────────────────────────────────────────
+   When: Someone visits your website (automatic)
+   Message: 📊 Visitor Tracking Alert → Event: PAGE VIEW
+   ✓ Triggered automatically, no code needed
+
+2. CLICK EVENT ─────────────────────────────────────────────────────────────────────
+   When: User clicks a button or link (optional)
+   Message: 📊 Visitor Tracking Alert → Event: CLICK
+   Code: WebsiteTracker.track('click', { buttonId: '...', ... })
+
+3. FORM SUBMISSION ─────────────────────────────────────────────────────────────────
+   When: User submits a form
+   Message: 📊 Visitor Tracking Alert → Event: FORM SUBMIT
+   Code: WebsiteTracker.track('form_submit', { formName: '...', ... })
+
+4. SIGN UP ─────────────────────────────────────────────────────────────────────────
+   When: New user creates account
+   Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+           Details: • action: signup • plan: Pro
+   Code: WebsiteTracker.track('custom', { action: 'signup', plan: 'Pro' })
+
+5. LOGIN ───────────────────────────────────────────────────────────────────────────
+   When: User logs in
+   Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+           Details: • action: login • method: google_oauth
+   Code: WebsiteTracker.track('custom', { action: 'login', ... })
+
+6. PURCHASE ────────────────────────────────────────────────────────────────────────
+   When: User completes purchase
+   Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+           Details: • action: purchase • amount: 99.99 • items: 3
+   Code: WebsiteTracker.track('custom', { action: 'purchase', ... })
+
+7. FEATURE USAGE ───────────────────────────────────────────────────────────────────
+   When: User uses a feature
+   Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+           Details: • action: feature_used • feature: export_pdf
+   Code: WebsiteTracker.track('custom', { action: 'feature_used', ... })
+
+8. VIDEO PLAY ──────────────────────────────────────────────────────────────────────
+   When: User plays a video
+   Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+           Details: • action: video_play • duration_seconds: 600
+   Code: WebsiteTracker.track('custom', { action: 'video_play', ... })
+
+9. PRODUCT VIEW ────────────────────────────────────────────────────────────────────
+   When: User views a product
+   Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+           Details: • action: product_view • productName: Blue Widget
+   Code: WebsiteTracker.track('custom', { action: 'product_view', ... })
+
+10. SEARCH ──────────────────────────────────────────────────────────────────────────
+    When: User performs search
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • action: search • query: best headphones
+    Code: WebsiteTracker.track('custom', { action: 'search', ... })
+
+11. DOWNLOAD ────────────────────────────────────────────────────────────────────────
+    When: User downloads a file
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • action: download • fileName: guide.pdf
+    Code: WebsiteTracker.track('custom', { action: 'download', ... })
+
+12. ERROR ───────────────────────────────────────────────────────────────────────────
+    When: An error occurs
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • action: error • errorType: payment_failed
+    Code: WebsiteTracker.track('custom', { action: 'error', ... })
+
+13. CONVERSION / GOAL ────────────────────────────────────────────────────────────────
+    When: User completes a goal
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • action: goal_completed • goalName: Free Trial Signup
+    Code: WebsiteTracker.track('custom', { action: 'goal_completed', ... })
+
+14. SHARE / REFERRAL ────────────────────────────────────────────────────────────────
+    When: User shares content
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • action: content_shared • platform: twitter
+    Code: WebsiteTracker.track('custom', { action: 'content_shared', ... })
+
+15. NEWSLETTER SIGNUP ───────────────────────────────────────────────────────────────
+    When: User subscribes to newsletter
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • action: newsletter_signup • frequency: weekly
+    Code: WebsiteTracker.track('custom', { action: 'newsletter_signup', ... })
+
+16. RATING / REVIEW ─────────────────────────────────────────────────────────────────
+    When: User leaves a review
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • action: review_submitted • rating: 5
+    Code: WebsiteTracker.track('custom', { action: 'review_submitted', ... })
+
+17. MULTI-STEP PROGRESS ─────────────────────────────────────────────────────────────
+    When: User progresses through steps (checkout, forms, etc.)
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • action: checkout_step • step: 2 • totalSteps: 3
+    Code: WebsiteTracker.track('custom', { action: 'checkout_step', ... })
+
+18. CUSTOM EVENT ────────────────────────────────────────────────────────────────────
+    When: Anything else you want to track
+    Message: 📊 Visitor Tracking Alert → Event: CUSTOM
+            Details: • [your custom fields]
+    Code: WebsiteTracker.track('custom', { [your data] })
+
+╔════════════════════════════════════════════════════════════════════════════════════╗
+║                          HOW DATA FLOWS THROUGH SYSTEM                             ║
+╚════════════════════════════════════════════════════════════════════════════════════╝
+
+1. USER VISITS WEBSITE
+   └─ analytics-tracker.js loads automatically
+
+2. EVENT HAPPENS
+   ├─ Automatic: Page view
+   ├─ User action: Button click, form submit
+   └─ Custom: WebsiteTracker.track('custom', {...})
+
+3. CLIENT LIBRARY SENDS EVENT
+   ├─ POST /api/track
+   ├─ Headers: Content-Type: application/json
+   └─ Body: { event, website, page, title, referrer, metadata }
+
+4. API PROCESSES EVENT
+   ├─ Validates required fields
+   ├─ Formats Telegram message
+   └─ Calls Telegram Bot API
+
+5. TELEGRAM BOT SENDS MESSAGE
+   ├─ Your bot: analytics_bot
+   ├─ Chat ID: 7448243821
+   └─ Message appears in your Telegram
+
+6. YOU GET NOTIFIED
+   └─ Instant notification on your phone/desktop!
+
+╔════════════════════════════════════════════════════════════════════════════════════╗
+║                             MESSAGE FORMAT EXAMPLE                                 ║
+╚════════════════════════════════════════════════════════════════════════════════════╝
+
+📊 Visitor Tracking Alert
+
+Website: aurith-recruit.com
+Event: PAGE VIEW
+Page: /dashboard
+Title: Aurith Recruit - Dashboard
+Time: 3/30/2026, 10:45 AM
+Referrer: google.com
+Device: 💻 Desktop
+
+Details:                          ← Only included if metadata provided
+  • customField1: value1
+  • customField2: value2
+  • customField3: value3
+
+╔════════════════════════════════════════════════════════════════════════════════════╗
+║                           QUICK COPY-PASTE EXAMPLES                               ║
+╚════════════════════════════════════════════════════════════════════════════════════╝
+
+AUTOMATIC (No code needed):
+───────────────────────────
+✓ Page loads automatically tracked
+✓ Device type automatically detected
+✓ Referrer automatically captured
+
+BUTTON CLICK:
+─────────────
+document.getElementById('btn').addEventListener('click', () => {
+  WebsiteTracker.track('custom', {
+    action: 'button_clicked',
+    buttonText: 'Sign Up'
+  });
+});
+
+FORM SUBMISSION:
+────────────────
+document.getElementById('form').addEventListener('submit', () => {
+  WebsiteTracker.track('custom', {
+    action: 'form_submitted',
+    formName: 'contact_form'
+  });
+});
+
+PURCHASE:
+─────────
+WebsiteTracker.track('custom', {
+  action: 'purchase',
+  amount: 99.99,
+  itemCount: 3
+});
+
+SIGNUP:
+───────
+WebsiteTracker.track('custom', {
+  action: 'signup',
+  plan: 'Pro'
+});
+
+╔════════════════════════════════════════════════════════════════════════════════════╗
+║                              DEVICE DETECTION                                      ║
+╚════════════════════════════════════════════════════════════════════════════════════╝
+
+Messages automatically show device type:
+
+💻 DESKTOP
+  ├─ Windows
+  ├─ macOS
+  ├─ Linux
+  └─ Other
+
+📱 MOBILE
+  ├─ iPhone / iOS
+  ├─ Android
+  └─ Other mobile OS
+
+╔════════════════════════════════════════════════════════════════════════════════════╗
+║                            ENVIRONMENT VARIABLES                                   ║
+╚════════════════════════════════════════════════════════════════════════════════════╝
+
+TELEGRAM_BOT_TOKEN=8690027071:AAH4Bl49LURNI0RBQjhBsA5AzgwdRBFkSDk
+TELEGRAM_CHAT_ID=7448243821
+
+These are already configured in your .env.local file!
+
+╔════════════════════════════════════════════════════════════════════════════════════╗
+║                              FILE LOCATIONS                                        ║
+╚════════════════════════════════════════════════════════════════════════════════════╝
+
+📁 Core Files:
+   ├─ app/api/track/route.ts              API endpoint (sends to Telegram)
+   └─ public/analytics-tracker.js         Client library (embed anywhere)
+
+📁 Documentation:
+   ├─ ANALYTICS_SETUP.md                  Complete setup guide
+   ├─ ANALYTICS_EXAMPLES.md               Code for 8+ frameworks
+   ├─ TELEGRAM_ANALYTICS_QUICK_START.md  2-minute reference
+   ├─ TELEGRAM_MESSAGE_EXAMPLES.md        All 18 message types
+   └─ ANALYTICS_SUMMARY.md                Overview of system
+
+╔════════════════════════════════════════════════════════════════════════════════════╗
+║                               DEPLOY COMMANDS                                      ║
+╚════════════════════════════════════════════════════════════════════════════════════╝
+
+LOCAL TESTING:
+   npm run dev
+   → Open http://localhost:3000
+   → Check Telegram for page view message
+
+DEPLOY TO VERCEL:
+   git push
+   → Automatically deploys
+   → Analytics works immediately
+
+DEPLOY ELSEWHERE:
+   1. Set TELEGRAM_BOT_TOKEN env var
+   2. Set TELEGRAM_CHAT_ID env var
+   3. Deploy your app
+   4. Done!
+
