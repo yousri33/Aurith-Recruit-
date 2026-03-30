@@ -154,6 +154,64 @@ window.WebsiteTracker = (function () {
     };
   }
 
+  function getBatteryInfo() {
+    // Battery Status API (limited support)
+    if (navigator.getBattery) {
+      return navigator.getBattery().then(battery => ({
+        level: battery.level,
+        charging: battery.charging,
+        chargingTime: battery.chargingTime,
+        dischargingTime: battery.dischargingTime
+      })).catch(() => null);
+    }
+    return Promise.resolve(null);
+  }
+
+  function getNetworkInfo() {
+    // Network Information API
+    const connection = navigator.connection ||
+                       navigator.mozConnection ||
+                       navigator.webkitConnection;
+
+    if (connection) {
+      return {
+        type: connection.effectiveType, // 4g, 3g, 2g, slow-2g
+        downlink: connection.downlinkMax,
+        rtt: connection.rtt,
+        saveData: connection.saveData
+      };
+    }
+    return null;
+  }
+
+  function getMemoryInfo() {
+    // Memory Information API (Chrome only)
+    if (performance && performance.memory) {
+      return {
+        usedJSHeapSize: performance.memory.usedJSHeapSize,
+        totalJSHeapSize: performance.memory.totalJSHeapSize,
+        jsHeapSizeLimit: performance.memory.jsHeapSizeLimit
+      };
+    }
+    return null;
+  }
+
+  function getCpuCores() {
+    // Get CPU cores
+    return navigator.hardwareConcurrency || null;
+  }
+
+  function getStorageInfo() {
+    // Storage information (if available)
+    if (navigator.storage && navigator.storage.estimate) {
+      return navigator.storage.estimate().then(estimate => ({
+        usage: estimate.usage,
+        quota: estimate.quota
+      })).catch(() => null);
+    }
+    return Promise.resolve(null);
+  }
+
   function sendEvent(eventData) {
     if (!config.enabled || !config.trackingUrl) {
       log("Tracking disabled or URL not set");
@@ -163,6 +221,9 @@ window.WebsiteTracker = (function () {
     const deviceInfo = detectDeviceInfo();
     const locationInfo = getLocationInfo();
     const screenInfo = getScreenInfo();
+    const networkInfo = getNetworkInfo();
+    const memoryInfo = getMemoryInfo();
+    const cpuCores = getCpuCores();
 
     const payload = {
       event: eventData.event,
@@ -185,8 +246,11 @@ window.WebsiteTracker = (function () {
         screenResolution: screenInfo.screenResolution,
         language: navigator.language,
         onLine: navigator.onLine,
+        cpuCores: cpuCores,
       },
       screen: screenInfo,
+      network: networkInfo,
+      memory: memoryInfo,
       metadata: eventData.metadata || {},
     };
 

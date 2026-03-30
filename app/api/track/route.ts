@@ -12,6 +12,7 @@ interface TrackingEvent {
   userAgent?: string;
   timestamp?: number;
   metadata?: Record<string, any>;
+  clientIp?: string;
 }
 
 async function sendToTelegram(message: string): Promise<boolean> {
@@ -91,13 +92,42 @@ function formatTelegramMessage(event: TrackingEvent): string {
     }
   }
 
+  // IP Address
+  if (event.clientIp && event.clientIp !== "Unknown") {
+    message += `\n<b>Network:</b>\n`;
+    message += `  🌐 IP: ${event.clientIp}\n`;
+  }
+
   if (event.referrer && event.referrer !== "direct") {
-    message += `\n<b>Referrer:</b> ${event.referrer}\n`;
+    message += `<b>Referrer:</b> ${event.referrer}\n`;
   }
 
   // Connection Status
   if (device.onLine !== undefined) {
     message += `<b>Status:</b> ${device.onLine ? "🟢 Online" : "🔴 Offline"}\n`;
+  }
+
+  // Additional Device Capabilities
+  const battery = event.metadata?.battery;
+  const network = event.metadata?.network;
+  const memory = event.metadata?.memory;
+
+  if (battery || network || memory) {
+    message += `\n<b>System:</b>\n`;
+    if (battery?.level !== undefined) {
+      message += `  🔋 Battery: ${Math.round(battery.level * 100)}%`;
+      if (battery.charging) message += ` (⚡ Charging)`;
+      message += `\n`;
+    }
+    if (network?.type) {
+      message += `  📡 Network: ${network.type}`;
+      if (network.downlink) message += ` (${network.downlink}Mbps)`;
+      message += `\n`;
+    }
+    if (memory?.totalJSHeapSize) {
+      const mb = Math.round(memory.totalJSHeapSize / 1048576);
+      message += `  💾 Memory: ${mb}MB\n`;
+    }
   }
 
   // Other metadata
@@ -125,6 +155,28 @@ function formatTelegramMessage(event: TrackingEvent): string {
   return message;
 }
 
+function getClientIp(request: NextRequest): string {
+  // Check various headers for client IP
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+
+  const xRealIp = request.headers.get("x-real-ip");
+  if (xRealIp) {
+    return xRealIp;
+  }
+
+  const cfConnectingIp = request.headers.get("cf-connecting-ip");
+  if (cfConnectingIp) {
+    return cfConnectingIp;
+  }
+
+  // Fallback to socket address (works in some environments)
+  const ip = request.ip || "Unknown";
+  return ip;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as TrackingEvent;
@@ -137,6 +189,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get client IP
+    const clientIp = getClientIp(request);
+
     // Add request metadata
     const event: TrackingEvent = {
       event: body.event || "page_view",
@@ -146,6 +201,7 @@ export async function POST(request: NextRequest) {
       referrer: request.headers.get("referer") || body.referrer,
       userAgent: request.headers.get("user-agent") || body.userAgent,
       timestamp: body.timestamp || Date.now(),
+      clientIp: clientIp,
       metadata: body.metadata,
     };
 
