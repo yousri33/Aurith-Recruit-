@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Script from 'next/script'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
@@ -36,6 +37,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          src="/analytics-tracker.js"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="init-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              WebsiteTracker.init({
+                trackingUrl: '/api/track',
+                website: 'aurith-recruit.com',
+                enabled: true,
+                trackPageView: true,
+                debug: false
+              });
+            `,
+          }}
+        />
+      </head>
       <body className="font-sans antialiased bg-white">
         {children}
         <Analytics />
