@@ -15,6 +15,57 @@ interface TrackingEvent {
   clientIp?: string;
 }
 
+interface GeoLocation {
+  country?: string;
+  city?: string;
+  region?: string;
+  lat?: number;
+  lon?: number;
+}
+
+async function getGeolocation(ip: string): Promise<GeoLocation> {
+  // Skip geolocation for local IPs
+  if (
+    ip.startsWith("127.") ||
+    ip.startsWith("192.168.") ||
+    ip.startsWith("10.") ||
+    ip.includes("::1") ||
+    ip.includes("::ffff:192") ||
+    ip.includes("::ffff:127") ||
+    ip === "Unknown"
+  ) {
+    return {
+      city: "Local",
+      country: "Local Testing",
+      region: "N/A",
+    };
+  }
+
+  try {
+    // Use geojs.io (free, unlimited)
+    const response = await fetch(`https://get.geojs.io/v1/ip/geo/${ip}.json`, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(3000),
+    });
+
+    if (!response.ok) {
+      return { city: "Unknown", country: "Unknown", region: "Unknown" };
+    }
+
+    const data = (await response.json()) as Record<string, any>;
+    return {
+      country: data.country_name || data.country || "Unknown",
+      city: data.city || "Unknown",
+      region: data.region_name || data.region || "Unknown",
+      lat: data.latitude,
+      lon: data.longitude,
+    };
+  } catch (error) {
+    console.error("Geolocation fetch error:", error);
+    return { city: "Unknown", country: "Unknown", region: "Unknown" };
+  }
+}
+
 async function sendToTelegram(message: string): Promise<boolean> {
   if (!TELEGRAM_BOT_TOKEN) {
     console.error("TELEGRAM_BOT_TOKEN not configured");
@@ -44,113 +95,109 @@ async function sendToTelegram(message: string): Promise<boolean> {
   }
 }
 
-function formatTelegramMessage(event: TrackingEvent): string {
+function formatTelegramMessage(
+  event: TrackingEvent,
+  geo: GeoLocation
+): string {
   const timestamp = new Date(event.timestamp || Date.now()).toLocaleString();
-
-  let message = `<b>📊 Visitor Tracking Alert</b>\n\n`;
-  message += `<b>Website:</b> ${event.website}\n`;
-  message += `<b>Event:</b> ${event.event.replace(/_/g, " ").toUpperCase()}\n`;
-  message += `<b>Page:</b> <code>${event.page}</code>\n`;
-
-  if (event.title) {
-    message += `<b>Title:</b> ${event.title}\n`;
-  }
-
-  message += `<b>Time:</b> ${timestamp}\n`;
-
-  // Device Information
   const device = event.metadata?.device as any || {};
-  if (device.model || device.os) {
-    message += `\n<b>Device:</b>\n`;
-    if (device.model) message += `  🔧 Model: ${device.model}\n`;
-    if (device.os) message += `  🖥️ OS: ${device.os}`;
-    if (device.osVersion) message += ` ${device.osVersion}`;
-    message += `\n`;
-    if (device.browser) message += `  🌐 Browser: ${device.browser}`;
-    if (device.browserVersion) message += ` ${device.browserVersion}`;
-    message += `\n`;
-  } else if (event.userAgent) {
-    const isMobile = /Mobile|Android|iPhone/.test(event.userAgent);
-    const deviceType = isMobile ? "📱 Mobile" : "💻 Desktop";
-    message += `<b>Device:</b> ${deviceType}\n`;
-  }
-
-  // Location Information
-  if (device.timezone || device.language) {
-    message += `\n<b>Location:</b>\n`;
-    if (device.timezone) message += `  📍 Timezone: ${device.timezone}\n`;
-    if (device.language) message += `  🌍 Language: ${device.language}\n`;
-  }
-
-  // Screen Information
   const screen = event.metadata?.screen as any;
-  if (screen?.screenResolution) {
-    message += `\n<b>Screen:</b>\n`;
-    message += `  📐 Resolution: ${screen.screenResolution}\n`;
-    if (screen.devicePixelRatio) {
-      message += `  💾 Pixel Ratio: ${screen.devicePixelRatio}\n`;
-    }
-  }
 
-  // IP Address
-  if (event.clientIp && event.clientIp !== "Unknown") {
-    message += `\n<b>Network:</b>\n`;
-    message += `  🌐 IP: ${event.clientIp}\n`;
-  }
+  let message = `<b>📊 VISITOR ALERT</b>\n\n`;
 
+  // 1. LOCATION (TOP PRIORITY)
+  message += `<b>📍 LOCATION</b>\n`;
+  message += `  🌍 Country: <b>${geo.country || "Unknown"}</b>\n`;
+  message += `  🏙️ City: <b>${geo.city || "Unknown"}</b>\n`;
+  if (geo.region && geo.region !== "Unknown") {
+    message += `  🗺️ Region: ${geo.region}\n`;
+  }
+  message += `\n`;
+
+  // 2. DEVICE (OS & MOBILE MODEL)
+  message += `<b>📱 DEVICE</b>\n`;
+  if (device.os) {
+    const osVersion = device.osVersion ? ` ${device.osVersion}` : "";
+    message += `  🖥️ OS: <b>${device.os}${osVersion}</b>\n`;
+  }
+  if (device.model) {
+    const isMobileDevice = device.isMobile ? "📱 " : "💻 ";
+    message += `  ${isMobileDevice}Model: <b>${device.model}</b>\n`;
+  }
+  if (device.browser) {
+    const browserVersion = device.browserVersion ? ` ${device.browserVersion}` : "";
+    message += `  🌐 Browser: ${device.browser}${browserVersion}\n`;
+  }
+  if (device.timezone) {
+    message += `  🕐 Timezone: ${device.timezone}\n`;
+  }
+  message += `\n`;
+
+  // 3. PAGE INFO
+  message += `<b>📄 PAGE</b>\n`;
+  message += `  🌐 Website: ${event.website}\n`;
+  message += `  📝 URL: <code>${event.page}</code>\n`;
+  if (event.title) {
+    message += `  📌 Title: ${event.title}\n`;
+  }
+  message += `  ⏱️ Time: ${timestamp}\n`;
   if (event.referrer && event.referrer !== "direct") {
-    message += `<b>Referrer:</b> ${event.referrer}\n`;
+    message += `  🔗 Referrer: ${event.referrer}\n`;
   }
+  message += `\n`;
 
-  // Connection Status
-  if (device.onLine !== undefined) {
-    message += `<b>Status:</b> ${device.onLine ? "🟢 Online" : "🔴 Offline"}\n`;
+  // 4. NETWORK & IP
+  message += `<b>🌐 NETWORK</b>\n`;
+  if (event.clientIp) {
+    message += `  IP: <code>${event.clientIp}</code>\n`;
   }
-
-  // Additional Device Capabilities
-  const battery = event.metadata?.battery;
   const network = event.metadata?.network;
+  if (network?.type) {
+    message += `  📡 Connection: ${network.type}`;
+    if (network.downlink) message += ` (${network.downlink}Mbps)`;
+    message += `\n`;
+  }
+  if (network?.rtt) {
+    message += `  ⏱️ RTT: ${network.rtt}ms\n`;
+  }
+  message += `\n`;
+
+  // 5. SCREEN INFO
+  if (screen?.screenResolution) {
+    message += `<b>📐 SCREEN</b>\n`;
+    message += `  Resolution: ${screen.screenResolution}\n`;
+    if (device.cpuCores) {
+      message += `  CPU Cores: ${device.cpuCores}\n`;
+    }
+    if (screen.devicePixelRatio) {
+      message += `  Pixel Ratio: ${screen.devicePixelRatio}\n`;
+    }
+    message += `\n`;
+  }
+
+  // 6. SYSTEM (Battery, Memory, etc.)
+  const battery = event.metadata?.battery;
   const memory = event.metadata?.memory;
 
-  if (battery || network || memory) {
-    message += `\n<b>System:</b>\n`;
+  if (battery || memory || device.onLine !== undefined) {
+    message += `<b>⚙️ SYSTEM</b>\n`;
     if (battery?.level !== undefined) {
       message += `  🔋 Battery: ${Math.round(battery.level * 100)}%`;
       if (battery.charging) message += ` (⚡ Charging)`;
-      message += `\n`;
-    }
-    if (network?.type) {
-      message += `  📡 Network: ${network.type}`;
-      if (network.downlink) message += ` (${network.downlink}Mbps)`;
       message += `\n`;
     }
     if (memory?.totalJSHeapSize) {
       const mb = Math.round(memory.totalJSHeapSize / 1048576);
       message += `  💾 Memory: ${mb}MB\n`;
     }
+    if (device.onLine !== undefined) {
+      message += `  Status: ${device.onLine ? "🟢 Online" : "🔴 Offline"}\n`;
+    }
+    message += `\n`;
   }
 
-  // Other metadata
-  const otherMetadata = event.metadata
-    ? Object.entries(event.metadata).filter(
-        ([key]) =>
-          !["device", "screen"].includes(key) &&
-          key !== "device" &&
-          key !== "os" &&
-          key !== "browser"
-      )
-    : [];
-
-  if (otherMetadata.length > 0) {
-    message += `\n<b>Details:</b>\n`;
-    otherMetadata.forEach(([key, value]) => {
-      if (typeof value === "object") {
-        message += `  • ${key}: ${JSON.stringify(value)}\n`;
-      } else {
-        message += `  • ${key}: ${value}\n`;
-      }
-    });
-  }
+  // 7. EVENT TYPE
+  message += `<b>Event:</b> ${event.event.replace(/_/g, " ").toUpperCase()}`;
 
   return message;
 }
@@ -192,6 +239,9 @@ export async function POST(request: NextRequest) {
     // Get client IP
     const clientIp = getClientIp(request);
 
+    // Get geolocation data
+    const geo = await getGeolocation(clientIp);
+
     // Add request metadata
     const event: TrackingEvent = {
       event: body.event || "page_view",
@@ -206,7 +256,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Format and send to Telegram
-    const message = formatTelegramMessage(event);
+    const message = formatTelegramMessage(event, geo);
     const sent = await sendToTelegram(message);
 
     if (!sent) {
@@ -217,7 +267,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { success: true, event },
+      { success: true, event, geolocation: geo },
       { status: 200 }
     );
   } catch (error) {
